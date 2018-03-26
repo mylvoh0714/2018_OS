@@ -1,12 +1,3 @@
-/**
- * This file is Simple Shell 
- *
- *
- *
- *
- */
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
