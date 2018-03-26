@@ -87,7 +87,6 @@ char **SplitLine(char *line) // Split each command line into word, i.e tokenizin
 int Execute(char **args) // the parameter args is array of char[]
 {                        // which consist of one command.
 	pid_t pid;           // ex) if command is  "grep main.c" , then args = ["grep","main.c"]
-	int status;
 
 	if (args[0] == NULL) { // No command input
 		return 1;
@@ -105,22 +104,18 @@ int Execute(char **args) // the parameter args is array of char[]
 		exit(EXIT_FAILURE);
 	} else if (pid < 0) {   // fork() error
 		perror("Shell");
-	} else {  // Parent PID
-		do {
-			waitpid(pid, &status, WUNTRACED);
-		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 	}
 	return 1;
 }
 
-void BatchMode(void)
+void BatchMode(char **argv)
 {
 	char line[1024];     // The "line" variable's max buffer size is 1024.
 	char **semicol_args; // i.e only can read sizeof(char)*1024 in each line of batch file.
 	char **args;
 	FILE *fp;
 
-	fp = fopen("./batchfile","r");
+	fp = fopen(argv[1],"r");
 	while( !feof(fp))
 	{
 		fgets(line,1024,fp);
@@ -132,6 +127,8 @@ void BatchMode(void)
 			Execute(args);
 			free(args);
 		}
+
+		while(wait(NULL)>0); // wait until all child processes are terminated
 		free(semicol_args);
 	}
 }
@@ -156,6 +153,8 @@ void InteractiveMode(void)
 			status = Execute(args);		// "status" variable is made for "quit" command
 			free(args);
 		}
+
+		while(wait(NULL) > 0); // wait until all child processes are terminated
 		free(semicol_args);
 		free(line);
 	} while(status);
@@ -167,7 +166,7 @@ int main(int argc, char **argv)
 	if(argc == 1) {
 		InteractiveMode();
 	} else if(argc == 2) {
-		BatchMode();
+		BatchMode(argv);
 	} else {
 		printf("Error!! : \"./shell\",\"./shell file\" format input only\n");
 	}
