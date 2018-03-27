@@ -116,9 +116,8 @@ void BatchMode(char **argv)
 	FILE *fp;
 
 	fp = fopen(argv[1],"r");
-	while( !feof(fp))
+	while( fgets(line,1024,fp))
 	{
-		fgets(line,1024,fp);
 		printf("%s",line);
 		semicol_args = SplitSemicol(line); // "semicol_args" : array of multiple commands seperated by ';'
 		for( int i=0; semicol_args[i]!=NULL; i++)
@@ -127,8 +126,7 @@ void BatchMode(char **argv)
 			Execute(args);
 			free(args);
 		}
-
-		while(wait(NULL)>0); // wait until all child processes are terminated
+		while(wait(NULL) > 0); // wait until all child processes are terminated
 		free(semicol_args);
 	}
 }
