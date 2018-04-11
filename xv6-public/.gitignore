@@ -15,4 +15,5 @@ kernelmemfs
 mkfs
 .gdbinit
 cscope.*
+tags
 
