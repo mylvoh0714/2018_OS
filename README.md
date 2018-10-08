@@ -1,2 +1,2 @@
-# 2018_OS
-2018 Operating System xv6 project
+# xv6, a simple Unix-like teaching operating system
+ELE3021, operating system xv6 project
